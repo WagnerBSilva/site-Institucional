@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="icon" type="image/jpg" href="sources/logo.png" />
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="css/styleDashboardAnalista.css">
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <!-- <link rel="stylesheet" href="css/style3.css"> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/funcoes.js"></script>
+    <!-- CHART dif -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+</head>
+
+<body onload="validarSessao()">
+
+    <!-- <body> -->
+
+    <aside id="sideBar" class="sidebar">
+    </aside>
+
+    <section class="dashboard">
+        <div class="dash-content">
+
+            <div class="overview">
+
+
+                <div class="title dash">
+
+                    <div class="title">
+                        <i class="uil uil-tachometer-fast-alt"></i>
+                        <span class="text">dashboard</span>
+                    </div>
+
+                    <div class="title reset">
+
+                        <span class="text reiniciar">Reiniciar Máquina</span>
+                        <i onclick="alterarStatus(localStorage.iDTOTEM, 'd')" class='bx bx-power-off'></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="boxes">
+                <div class="box box1">
+                    <i class="uil uil-temperature-plus"></i>
+                    <span class="text">Temperatura atual</span>
+                    <span id="temp" class="number">0°C</span>
+                </div>
+
+                <div class="box box2">
+                    <i class="uil uil-processor"></i>
+                    <span class="text">CPU</span>
+                    <span id="usoProcessador" class="number">0%</span>
+                </div>
+
+                <div class="box box3">
+                    <i class='bx bxs-error'></i>
+
+                    <span class="text">RAM utilizada</span>
+                    <span id="usoRAM" class="number">0GB</span>
+                </div>
+                
+                <div class="box box3">
+                    <i class='bx bxs-error'></i>
+
+                    <span class="text">RAM disponível</span>
+                    <span id="usoRAM" class="number">0GB</span>
+                </div>
+            </div>
+
+
+            <div class="activity2">
+                <div class="title">
+                    <i class="uil uil-clock-three"></i>
+                    <span class="text">Analise Gráfica</span>
+                </div>
+
+
+
+                <!-- Add Chartjs -->
+
+                <div class="graphBox">
+                    <div class="box"><canvas id="myChart"></canvas></div>
+                    <div class="box"><canvas id="myChart2"></canvas></div>
+                    <div class="box"><canvas id="myChart3"></canvas></div>
+                </div>
+            </div>
+    </section>
+    </div>
+    </section>
+</body>
+
+</html>
+
+<script>
+
+    let proximaAtualizacao;
+    validarSessao();
+    obterDadosGrafico(localStorage.iDTOTEM);
+
+    function alterarStatus(id, isAtivo) {
+
+        fetch(`/totem/alterarStatus/${id}`, {
+
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+
+                isAtivo: isAtivo
+            })
+        }).then(function (resposta) {
+
+            if (resposta.ok) {
+                if (isAtivo == 'd') {
+                    cadastrarComando(id);
+                }
+            } else if (resposta.status == 404) {
+                window.alert("Deu 404!");
+            } else {
+                throw ("Houve um erro ao tentar realizar a postagem! Código da resposta: " + resposta.status);
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+        });
+    }
+
+    function cadastrarComando(idTotem) {
+        var comandoVar = "shutdown /r";
+        var idTotemVar = idTotem;
+        var idUsuarioVar = sessionStorage.ID_USUARIO;
+
+
+
+        fetch("/comandos/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                comandoServer: comandoVar,
+                idTotemServer: idTotemVar,
+                idUsuarioServer: idUsuarioVar,
+
+            })
+        }).then(function (resposta) {
+
+            if (!resposta.ok) {
+                throw ("Houve um erro ao tentar realizar o cadastro do comando!");
+                alterarStatus(idTotem, 't');
+            } else {
+                window.alert("Post atualizado com sucesso pelo usuario de email: " + sessionStorage.getItem("EMAIL_USUARIO") + "!");
+                window.location = "/dashboard/totens-cadastrados.html"
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+        });
+        return false;
+    }
+
+
+    function obterDadosGrafico(idTotem) {
+        var tempVar = document.getElementById('temp');
+        // var qtdProcessosVar = document.getElementById('qtdProcessos');
+        var usoProcessadorVar = document.getElementById('usoProcessador');
+        var usoMemoriaVar = document.getElementById('usoRAM');
+
+        fetch(`/metricas/ultimas/${idTotem}`, { cache: 'no-store' }).then(function (response) {
+            if (response.ok) {
+                response.json().then(function (resposta) {
+                    console.log(`Dados recebidos: ${JSON.stringify(resposta)}`);
+                    tempVar.innerHTML = resposta[0].temperatura + "°";
+                    usoProcessadorVar.innerHTML = resposta[0].usoProcessador + "%";
+                    usoMemoriaVar.innerHTML = resposta[0].UsoRAM + "GB";
+                    resposta.reverse();
+
+                    plotarGrafico(resposta, idTotem);
+                });
+            } else {
+                console.error('Nenhum dado encontrado ou erro na API');
+            }
+        })
+            .catch(function (error) {
+                console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
+            });
+    }
+
+
+    function plotarGrafico(resposta, idTotem) {
+        console.log('iniciando plotagem do gráfico...');
+
+        // Criando estrutura para plotar gráfico - labels
+        let labels = [];
+
+        // Criando estrutura para plotar gráfico - dados
+        let data = {
+            labels: labels,
+            datasets: [{
+                label: 'Uso memoria RAM',
+                data: [],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        };
+
+        let data2 = {
+            labels: labels,
+            datasets: [{
+                label: 'Uso processador',
+                data: [],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        };
+
+        let data3 = {
+            labels: labels,
+            datasets: [{
+                label: 'Uso Temperatura',
+                data: [],
+                fill: false,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        };
+
+        console.log('----------------------------------------------')
+        console.log('Estes dados foram recebidos pela funcao "obterDadosGrafico" e passados para "plotarGrafico":')
+        console.log(resposta)
+
+        // Inserindo valores recebidos em estrutura para plotar o gráfico
+        for (i = 0; i < resposta.length; i++) {
+            labels.push(resposta[i].dtInicializado);
+            data.datasets[0].data.push(resposta[i].UsoRAM);
+            data2.datasets[0].data.push(resposta[i].usoProcessador);
+            data3.datasets[0].data.push(resposta[i].temperatura);
+
+        }
+
+        console.log('----------------------------------------------')
+        console.log('O gráfico será plotado com os respectivos valores:')
+        console.log('Labels:')
+        console.log(labels)
+        console.log('Dados:')
+        console.log(data.datasets)
+        console.log('----------------------------------------------')
+
+        // Criando estrutura para plotar gráfico - config
+        const config = {
+
+            type: 'line',
+            data: data,
+        };
+
+        const config2 = {
+
+            type: 'line',
+            data: data2,
+        };
+
+        const config3 = {
+
+            type: 'line',
+            data: data3,
+        };
+        // Adicionando gráfico criado em div na tela
+        let myChart = new Chart(
+            document.getElementById('myChart'),
+            config
+        );
+
+        let myChart2 = new Chart(
+            document.getElementById('myChart2'),
+            config2
+        );
+
+        let myChart3 = new Chart(
+            document.getElementById('myChart3'),
+            config3
+        );
+        setTimeout(() => atualizarGrafico(idTotem, data, data2, data3, myChart, myChart2, myChart3), 2000);
+    }
+
+
+
+
+    // Esta função *atualizarGrafico* atualiza o gráfico que foi renderizado na página,
+    // buscando a última medida inserida em tabela contendo as capturas, 
+
+    //     Se quiser alterar a busca, ajuste as regras de negócio em src/controllers
+    //     Para ajustar o "select", ajuste o comando sql em src/models
+    function atualizarGrafico(idTotem, data, data2, data3, myChart, myChart2, myChart3) {
+
+        var tempVar = document.getElementById('temp');
+        // var qtdProcessosVar = document.getElementById('qtdProcessos');
+        var usoProcessadorVar = document.getElementById('usoProcessador');
+        var usoMemoriaVar = document.getElementById('usoRAM');
+
+        fetch(`/metricas/tempo-real/${idTotem}`, { cache: 'no-store' })
+            .then(function (response) {
+                
+                if (response.ok) {
+
+                    response.json().then(function (novoRegistro) {
+                        console.log(`Dados recebidos: ${JSON.stringify(novoRegistro)}`);
+
+                        tempVar.innerHTML = novoRegistro[0].temperatura + "°";
+                        usoProcessadorVar.innerHTML = novoRegistro[0].usoProcessador + "%";
+                        usoMemoriaVar.innerHTML = novoRegistro[0].UsoRAM + "GB";
+
+                        console.log(`Dados atuais do gráfico:`);
+                        console.log(data);
+
+                        // document.getElementById("avisoCaptura").innerHTML = ""
+
+                        if (novoRegistro[0].dtInicializado == data.labels[data.labels.length - 1]) {
+                            console.log("---------------------------------------------------------------")
+                            console.log("Como não há dados novos para captura, o gráfico não atualizará.")
+                            // document.getElementById("avisoCaptura").innerHTML = "<i class='fa-solid fa-triangle-exclamation'></i> Foi trazido o dado mais atual capturado pelo sensor. <br> Como não há dados novos a exibir, o gráfico não atualizará."
+                            console.log("Horário do novo dado capturado:")
+                            console.log(novoRegistro[0].momento_grafico)
+                            console.log("Horário do último dado capturado:")
+                            console.log(data.labels[data.labels.length - 1])
+                            console.log("---------------------------------------------------------------")
+                        } else {
+                            // tirando e colocando valores no gráfico
+                            data.labels.shift(); // apagar o primeiro
+                            data.labels.push(novoRegistro[0].dtInicializado); // incluir um novo momento
+                            data2.labels.shift(); // apagar o primeiro
+                            data2.labels.push(novoRegistro[0].dtInicializado); // incluir um novo momento
+                            data3.labels.shift(); // apagar o primeiro
+                            data3.labels.push(novoRegistro[0].dtInicializado); // incluir um novo momento
+
+                            console.log(novoRegistro[0]);
+                            data.datasets[0].data.shift();  // apagar o primeiro de umidade
+                            data.datasets[0].data.push(novoRegistro[0].UsoRAM); // incluir uma nova medida de umidade
+
+                            myChart.update();
+                            data2.datasets[0].data.push(novoRegistro[0].usoProcessador); // incluir uma nova medida de temperatura
+                            data2.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                            myChart2.update();
+
+                            data3.datasets[0].data.shift();  // apagar o primeiro de temperatura
+                            data3.datasets[0].data.push(novoRegistro[0].temperatura); // incluir uma nova medida de temperatura
+
+                            myChart3.update();
+                        }
+
+                        // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+                        proximaAtualizacao = setTimeout(() => atualizarGrafico(idTotem, data, data2, data3, myChart, myChart2, myChart3), 2000);
+                    });
+                } else {
+                    console.error('Nenhum dado encontrado ou erro na API');
+                    // Altere aqui o valor em ms se quiser que o gráfico atualize mais rápido ou mais devagar
+                    proximaAtualizacao = setTimeout(() => atualizarGrafico(idTotem, data, data2, data3, myChart, myChart2, myChart3), 2000);
+                }
+            })
+            .catch(function (error) {
+                console.error(`Erro na obtenção dos dados p/ gráfico: ${error.message}`);
+            });
+
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>

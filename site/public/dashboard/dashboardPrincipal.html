@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Totem</title>
+    <link rel="icon" type="image/jpg" href="sources/logo.png" />
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="stylesheet" href="css/style3.css"> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/funcoes.js"></script>
+</head>
+
+<body onload="validarSessao()">
+    <!-- <body> -->
+
+    <aside id="sideBar" class="sidebar">
+
+    </aside>
+    <section class="dashboard">
+        <!-- <div class="top">
+            <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Pesquisar">
+            </div>
+        </div> -->
+
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">dashboard</span>
+                </div>
+            </div>
+            <div class="boxes">
+                <div class="box box1">
+                    <i class='bx bx-mobile-alt'></i>
+                    <span class="text">Total de Totens</span>
+                    <span id="totalTotem" class="number">0</span>
+                </div>
+
+                <div class="box box2">
+                    <i class='bx bxs-store'></i>
+                    <span class="text">Fast-foods</span>
+                    <span id="fastFoods" class="number">0</span>
+                </div>
+
+                <div class="box box1">
+                    <i class='bx bxs-error'></i>
+                    <span class="text">Reparos</span>
+                    <span id="reparos" class="number">0</span>
+                </div>
+            </div>
+
+            <!-- <div class="activity2">
+                <div class="title">
+                    <i class="uil uil-clock-three"></i>
+                    <span class="text">Analise Grafica</span>
+                </div>
+
+                    <div class="chart chart2">
+                        <div class="titulo-grafico2"></div>
+                        <div class="graphBox">
+                        </div>
+                    </div>
+
+            </div> -->
+
+            <div class="activity">
+                <div class="title">
+                    <i class="uil uil-clock-three"></i>
+                    <span class="text">Atividades recentes</span>
+                </div>
+
+                <div class="activity-data">
+                    <div id="nomesUsuario" class="data names">
+                    </div>
+
+                    <div id="comandoExecutado" class="data email">
+                    </div>
+
+
+                    <div id="idTotem" class="data type">
+                    </div>
+
+                    <div id="dtHora" class="data status">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
+</body>
+
+</html>
+
+<script>
+    var lista = []
+    var listaFastFood = []
+    var listaComandos = []
+    listar();
+
+    function listar() {
+        var idEmpresaVar = sessionStorage.EMPRESA
+        fetch(`/fastFood/listar/${idEmpresaVar}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+                resposta.json().then(json => {
+                    //console.log(json);
+                    //console.log(json.length)
+                    //console.log(JSON.stringify(json));
+                    listaFastFood = [];
+
+                    for (let i = 0; i < json.length; i++) {
+                        listaFastFood.push(json[i]);
+                        console.log(`cadastro${i}`)
+                        console.log(listaFastFood[i])
+                    }
+
+                    listarTotem();
+                });
+            } else {
+                console.log("Houve um erro ao tentar realizar o listar!");
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function listarTotem() {
+        var idEmpresaVar = sessionStorage.EMPRESA
+        fetch(`/totem/listar/${idEmpresaVar}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+                resposta.json().then(json => {
+                    //console.log(json);
+                    //console.log(json.length)
+                    //console.log(JSON.stringify(json));
+                    lista = [];
+
+                    for (let i = 0; i < json.length; i++) {
+                        lista.push(json[i]);
+                        console.log(`cadastro${i}`)
+                        console.log(lista[i])
+                    }
+                    listarComandos();
+                });
+            } else {
+                console.log("Houve um erro ao tentar realizar o listar!");
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function listarComandos() {
+        var idEmpresaVar = sessionStorage.EMPRESA
+        fetch(`/comandos/listar/${idEmpresaVar}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+                
+                    resposta.json().then(json => {
+                        listaComandos = [];
+
+                        for (let i = 0; i < json.length; i++) {
+                            listaComandos.push(json[i]);
+                            console.log(`cadastro${i}`)
+                            console.log(listaComandos[i])
+                        }
+
+                    });
+                
+                KPI()
+            } else {
+                console.log("Houve um erro ao tentar realizar o listar!");
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+
+    function KPI() {
+        let totem = 0
+        let fastFood = 0
+        let comando = 0
+        for (let i = 0; i < lista.length; i++) {
+            if (lista[i].isAtivoTotem == 't' ) {
+            // if (lista[i].isAtivoTotem == 't' && listaFastFood[x].isAtivoFastFood == 't') {
+                totem++
+            }
+
+        }
+        for (let x = 0; x < listaFastFood.length; x++) {
+            if (listaFastFood[x].isAtivoFastFood == 't') {
+                fastFood++
+            }
+
+        }
+
+        reparos.innerHTML = listaComandos.length;
+        totalTotem.innerHTML = totem;
+        fastFoods.innerHTML = fastFood;
+
+        atividadeRecentes();
+    }
+
+    function atividadeRecentes() {
+        if (listaComandos.length != -1) {
+            nomesUsuario.innerHTML = `
+                <span class="data-title">Nome do usuário</span>
+                `
+
+                comandoExecutado.innerHTML = `
+                <span class="data-title">Comando executado </span>
+                `
+
+                idTotem.innerHTML = `
+                <span class="data-title">Id Totem</span>
+                `
+
+
+                dtHora.innerHTML = `
+                <span class="data-title">Data e Hora </span>
+                `
+
+            for (let i = 0; i < listaComandos.length; i++) {
+
+                    nomesUsuario.innerHTML += `
+                    <span class="data-title">${listaComandos[i].nomeCompleto}</span>
+                    `
+
+                    comandoExecutado.innerHTML += `
+                    <span class="data-title">${listaComandos[i].comandoExecutado}</span>
+                    `
+
+                    idTotem.innerHTML += `
+                    <span class="data-title">${listaComandos[i].idTotem}</span>
+                    `
+
+                    
+                    dtHora.innerHTML += `
+                    <span class="data-title">${listaComandos[i].dtHora}</span>
+                    `
+            }
+        }
+    }
+
+
+</script>

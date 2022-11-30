@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="../js/funcoes.js"></script>
+    <title>Funcionários</title>
+    <link rel="icon" type="image/jpg" href="sources/logo.png" />
+</head>
+<!DOCTYPE html>
+
+<body onload="validarSessao()">
+
+    <!-- <body> -->
+        <aside id="sideBar" class="sidebar">
+        
+        </aside>
+    <section class="dashboard">
+        <div class="alerta_erro">
+            <div class="card_erro" id="cardErro">
+                <span id="mensagem_erro"></span>
+            </div>
+        </div>
+
+        <div class="dash-content">
+
+            <div class="activity">
+                <div class="title">
+                    <i class='bx bx-user'></i>
+                    <span class="text">Funcionários cadastrados</span>
+                </div>
+
+                <div class="activity-data">
+                    <div id="nomes" class="data names">
+                    </div>
+
+                    <div id="email" class="data email">
+                    </div>
+
+                    <div id="statusAtual" class="data joined">
+                    </div>
+                    <div id="statusAlterar" class="data status">
+                    </div>
+                    <div id="excluir" class="data type">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
+</body>
+
+</html>
+
+<script>
+    var lista = []
+
+    listar();
+
+    function listar() {
+        var idEmpresaVar = sessionStorage.EMPRESA
+        fetch(`/usuarios/listar/${idEmpresaVar}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+                resposta.json().then(json => {
+                    //console.log(json);
+                    //console.log(json.length)
+                    //console.log(JSON.stringify(json));
+                    lista = [];
+
+                    for (let i = 0; i < json.length; i++) {
+                        lista.push(json[i]);
+                        console.log(`cadastro${i}`)
+                        console.log(lista[i])
+                    }
+
+
+                    mostrarfuncionarios();
+                });
+            } else {
+                console.log("Houve um erro ao tentar realizar o listar!");
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+
+    function mostrarfuncionarios() {
+        if (lista.length != -1) {
+            nomes.innerHTML += `
+                <span class="data-title">Nomes</span>
+                `
+
+            email.innerHTML += `
+                <span class="data-title">Email </span>
+                `
+
+            statusAtual.innerHTML += `
+                <span class="data-title">Status atual</span>
+                `
+
+
+            statusAlterar.innerHTML += `
+                <span class="data-title">alterar status </span>
+                `
+
+            excluir.innerHTML += `
+                <span class="data-title">Excluir </span>
+                `
+
+            for (let i = 0; i < lista.length; i++) {
+                if (lista[i].isAtivo != 'e') {
+
+
+                    nomes.innerHTML += `
+                    <span class="data-title">${lista[i].nomeCompleto}</span>
+                    `
+
+                    email.innerHTML += `
+                    <span class="data-title">${lista[i].email} </span>
+                    `
+                    //
+                    if(lista[i].idUsuario == sessionStorage.ID_USUARIO){
+                        statusAtual.innerHTML += `
+                        <span class="data-title">Ativo</span>
+                        `
+
+                        statusAlterar.innerHTML += `
+                        <span class="data-title"><i class="uil uil-toggle-on"></i> </span>
+                        `
+
+                        excluir.innerHTML += `
+                        <span class="data-title"><i class="uil uil-trash-alt"></i></span>
+                        `
+                    }else if (lista[i].isAtivo == 't') {
+
+                        statusAtual.innerHTML += `
+                        <span class="data-title">Ativo</span>
+                        `
+                        statusAlterar.innerHTML += `
+                        <span onclick="alterarStatus(${lista[i].idUsuario}, 'f')" class="data-title"><i class="uil uil-toggle-on"></i> </span>
+                        `
+
+                        excluir.innerHTML += `
+                        <span onclick="alterarStatus(${lista[i].idUsuario}, 'e')" class="data-title"><i class="uil uil-trash-alt"></i></span>
+                        `
+                        } else{
+                            statusAtual.innerHTML += `
+                        <span class="data-title">Não Ativo</span>
+                        `
+                            statusAlterar.innerHTML += `
+                        <span onclick="alterarStatus(${lista[i].idUsuario}, 't')" class="data-title"><i class="uil uil-toggle-off"></i> </span>
+                        `
+
+                        excluir.innerHTML += `
+                        <span onclick="alterarStatus(${lista[i].idUsuario}, 'e')" class="data-title"><i class="uil uil-trash-alt"></i></span>
+                        `
+                    }
+                              
+                }
+            }
+        }
+    }
+
+    function alterarStatus(id, isAtivo ) {
+        console.log(isAtivo)
+        
+        fetch(`/usuarios/alterarStatus/${id}`, {
+
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+
+                isAtivo: isAtivo
+            })
+        }).then(function (resposta) {
+
+            if (resposta.ok) {
+                cardErro.style.display = "block"
+                    mensagem_erro.innerHTML = "Alteração realizada com sucesso!"
+                    setTimeout(() => {
+                        cardErro.style.display = "none";
+                    }, 3000);
+                    window.location = "/dashboard/funcionarios-cadastrados.html"
+            } else if (resposta.status == 404) {
+                window.alert("Deu 404!");
+            } else {
+                throw ("Houve um erro ao tentar realizar a postagem! Código da resposta: " + resposta.status);
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+        });
+    }
+
+
+</script>

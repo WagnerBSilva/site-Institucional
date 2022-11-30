@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar fastfood</title>
+    <link rel="icon" type="image/jpg" href="sources/logo.png" />
+    <link rel="stylesheet" href="css/cadastrar-totem.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="../js/funcoes.js"></script>
+</head>
+
+<body onload="validarSessao()">
+
+    <aside id="sideBar" class="sidebar">
+        
+    </aside>
+    <main>
+        <div class="pg">
+            <div class="alerta_erro">
+                <div class="card_erro" id="cardErro">
+                    <span id="mensagem_erro"></span>
+                </div>
+            </div>
+            <div class="container">
+                <div class="titulo">Cadastrar Fast-Food</div>
+                <!-- 
+                Cadastro da FastFood
+             -->
+                <div class="form" id="cadastroFastFood">
+                    <div class="detalhes">
+                        <div class="input-box">
+                            <span class="details">Nome Fast-Food</span>
+                            <input type="text" placeholder="Digite o nome do Fast-Food" id="ipt_cadastroNomeFast"
+                                required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">CNPJ</span>
+                            <input type="text" placeholder="Digite o CNPJ" id="ipt_cadastroCNPJ"
+                                pattern="([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})"
+                                required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">CEP</span>
+                            <input type="text" placeholder="Digite um CEP válido" id="ipt_cadastroCEP"
+                                pattern="^[0-9]{5}-[0-9]{3}$" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Telefone Celular</span>
+                            <input type="text" placeholder="Digite seu Telefone" id="ipt_cadastroTelefoneFastFood"
+                                pattern="^\(\d{2}\)\s\d{4,5}-?\d{4}" required>
+                        </div>
+
+                    </div>
+                    <div class="button">
+                        <button onclick="cadastrarFastFood()">cadastrar FastFood</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</body>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+
+</html>
+<script>
+    function cadastrarFastFood() {
+        var nomeVar = ipt_cadastroNomeFast.value;
+        var cnpjVar = ipt_cadastroCNPJ.value;
+        var cepVar = ipt_cadastroCEP.value;
+        var numeroTelefoneEmpVar = ipt_cadastroTelefoneFastFood.value;
+        var idEmpresaVar = sessionStorage.EMPRESA;
+
+        const reCnpj = /^([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/
+        const reCep = /^[0-9]{5}-[0-9]{3}$/;
+        const reTelefone = /^\(\d{2}\)\s\d{4,5}-?\d{4}/;
+
+        var myCnpj = reCnpj.exec(cnpjVar);
+        var myCep = reCep.exec(cepVar);
+        var myTelefone = reTelefone.exec(numeroTelefoneEmpVar);
+
+        if(nomeVar == null || nomeVar == undefined){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Preencha o nome";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else if(myCnpj == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um CNPJ válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        }else if(myCep == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira uma senha válida";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        }else if(myTelefone == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um telefone válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        }else if(idEmpresaVar == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Id invalido, realize o login novamente";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        }else {
+            fetch("/fastFood/cadastrarFastFood", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nomeServer: nomeVar,
+                    cnpjServer: cnpjVar,
+                    cepServer: cepVar,
+                    numeroServer: numeroTelefoneEmpVar,
+                    idEmpresaServer: idEmpresaVar
+                })
+            }).then(function (resposta) {
+
+                if (resposta.ok) {
+                    cardErro.style.display = "block"
+                    mensagem_erro.innerHTML = "Cadastro realizado com sucesso!"
+                    setTimeout(() => {
+                        cardErro.style.display = "none";
+                    }, 3000);
+                    window.location = "/dashboard/Fast-foods-cadastrados.html"
+                    
+                } else {
+                    throw ("Houve um erro ao tentar realizar o cadastro!");
+                }
+            }).catch(function (resposta) {
+                console.log(`#ERRO: ${resposta}`);
+            });
+            return false;
+        }
+    }
+
+
+    
+       
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+<script>
+    var cleave = new Cleave('#ipt_cadastroCNPJ', {
+        delimiters: ['.', '.', '/', '-'],
+        blocks: [2, 3, 3, 4, 2],
+        uppercase: true
+    });
+
+    var cleave = new Cleave('#ipt_cadastroTelefoneFastFood', {
+        delimiters: ['(', ')', ' ', '-'],
+        blocks: [0, 2, 0, 5, 4],
+        uppercase: true
+    });
+
+    var cleave = new Cleave('#ipt_cadastroCEP', {
+        delimiters: ['-'],
+        blocks: [5, 3],
+        uppercase: true
+    });
+
+
+</script>

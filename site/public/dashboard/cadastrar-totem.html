@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar totem</title>
+    <link rel="icon" type="image/jpg" href="sources/logo.png" />
+    <link rel="stylesheet" href="css/cadastrar-totem.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <script src="../js/funcoes.js"></script>
+</head>
+
+<body onload="validarSessao()">
+    <!-- <body> -->
+
+    <aside id="sideBar" class="sidebar">
+
+    </aside>
+    <main>
+        <!-- <div class="scroll-up-btn">
+        <ion-icon name="chevron-up-outline"></ion-icon>
+    </div> -->
+
+        <div class="pg">
+            <div class="alerta_erro">
+                <div class="card_erro" id="cardErro">
+                    <span id="mensagem_erro"></span>
+                </div>
+            </div>
+            <div class="container">
+                <div class="titulo">Cadastrar Totem</div>
+                <!-- 
+                Cadastro da empresa
+             -->
+                <div class="form" id="cadastroEmpresa">
+                    <div class="detalhes">
+                        <div class="input-box">
+                            <span class="detalhe">ID do Totem</span>
+                            <input type="text" placeholder="Digite o ID do totem" id="ipt_cadastroIDTotem"
+                                name="ipt_cadastroIDTotem" required onblur="listarPorId()">
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">CEP</span>
+                            <input type="text" placeholder="Digite um CEP" id="ipt_cadastroCEP"
+                                pattern="^[0-9]{5}-[0-9]{3}$" required onblur="listarFastFood()">
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Fast-food</span>
+                            <select name="cars" id="ipt_cadastroTotemFastFood" required>
+                                <option value="null">Insira um CEP</option>
+
+                            </select>
+                            <!-- <input type="text" placeholder="Digite o ID do Fast-Food" id="ipt_cadastroTotemFastFood" required> -->
+
+                        </div>
+
+                        <div class="input-box">
+                            <span class="detalhe">Limite Processador</span>
+                            <input type="text" placeholder="Digite um Limite Processador"
+                                id="ipt_cadastroLimiteProcessador" required=>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Limite Temperatura</span>
+                            <input type="text" placeholder="Digite um Limite Temperatura"
+                                id="ipt_cadastroLimiteTemperatura" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Limite Ram</span>
+                            <input type="text" placeholder="Digite um Limite Ram" id="ipt_cadastroLimiteRam" required>
+                        </div>
+
+                        <div class="input-box">
+                            <span class="detalhe">Usuario</span>
+                            <input id="ipt_cadastroUsuario" type="text" placeholder="Digite o usuario do totem"
+                                required onblur="listarPorUsuario()">
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Senha</span>
+                            <input id="ipt_cadastroSenha" type="password" placeholder="Digite a senha do Fast-Food"
+                                minlength="4" maxlength="12" required>
+                        </div>
+
+
+                    </div>
+                    <div class="button">
+                        <button onclick="cadastrarTotem()">Cadastrar Totem</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+</body>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+
+</html>
+<script>
+
+
+    var listaFastFood = []
+    var idCad = true
+    var usuarioCad = true
+    function listarPorId() {
+        var id = ipt_cadastroIDTotem.value;
+        fetch(`/totem/listarPorId/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+            console.log(resposta)
+            if (resposta.status == 200) {
+                idCad = true
+                cardErro.style = "display: block"
+                mensagem_erro.innerHTML = "Id já cadastrado";
+                setTimeout(() => {
+                    cardErro.style.display = "none";
+                }, 3000);
+            } else {
+                idCad = false;
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function listarPorUsuario() {
+        var usuario = ipt_cadastroUsuario.value;
+        fetch(`/totem/listarPorUsuario/${usuario}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+            console.log(resposta)
+            if (resposta.status == 200) {
+                usuarioCad = true
+                cardErro.style = "display: block"
+                mensagem_erro.innerHTML = "Usuário já cadastrado";
+                setTimeout(() => {
+                    cardErro.style.display = "none";
+                }, 3000);
+            } else {
+                usuarioCad = false;
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function listarFastFood() {
+        ipt_cadastroTotemFastFood.innerHTML = `
+                <option value="null">INSIRA UM CEP</option>
+                        `
+        var cepVar = ipt_cadastroCEP.value;
+        console.log(cepVar)
+        var idEmpresaVar = sessionStorage.EMPRESA;
+        console.log(idEmpresaVar)
+        fetch(`/fastFood/listarPorCep/${cepVar}/${idEmpresaVar}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+                resposta.json().then(json => {
+                    //console.log(json);
+                    //console.log(json.length)
+                    //console.log(JSON.stringify(json));
+                    listaFastFood = [];
+
+                    for (let i = 0; i < json.length; i++) {
+                        listaFastFood.push(json[i]);
+                        console.log(`cadastro${i}`)
+                        console.log(listaFastFood[i])
+                    }
+
+                    mostrarFastFood();
+                });
+            } else {
+                console.log("Houve um erro ao tentar realizar o listar!");
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function mostrarFastFood() {
+        ipt_cadastroTotemFastFood.innerHTML = "";
+        ipt_cadastroTotemFastFood.innerHTML += `
+                <option value="null">-- SELECIONE --</option>
+                        `
+        for (let i = 0; i < listaFastFood.length; i++) {
+            if (listaFastFood[i].isAtivoFastFood == 't') {
+                ipt_cadastroTotemFastFood.innerHTML += `
+                <option value="${listaFastFood[i].idFastFood}">${listaFastFood[i].nomeFastFood}</option>
+                        `
+            }
+
+        }
+    }
+
+    function cadastrarTotem() {
+        var idTotemVar = ipt_cadastroIDTotem.value;
+        var idFastFoodVar = ipt_cadastroTotemFastFood.value;
+        var limiteProcessadorVar = ipt_cadastroLimiteProcessador.value;
+        var limiteTemperaturaVar = ipt_cadastroLimiteTemperatura.value;
+        var limiteRamVar = ipt_cadastroLimiteRam.value;
+        var usuarioVar = ipt_cadastroUsuario.value;
+        var senhaVar = ipt_cadastroSenha.value;
+
+        console.log(senhaVar.length)
+        if (senhaVar.length < 4 || senhaVar.length >  12) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "A senha precisa conter entre 4 e 12 caracteres";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+        } else if (usuarioCad == true ) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Id já cadastrado";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+        } else if (idCad == true ) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Id já cadastrado";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+        } else if (usuarioVar == null || usuarioVar == undefined) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Preencha o Usuario";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+        } else if (senhaVar == null) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira uma senha válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        } else if (limiteProcessadorVar == null || limiteProcessadorVar < 1 || limiteProcessadorVar > 100) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um limite de processador válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        } else if (limiteTemperaturaVar == null || limiteTemperaturaVar < 1 || limiteTemperaturaVar > 100) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um limite de temperatura válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        } else if (limiteRamVar == null || limiteRamVar < 1 || limiteRamVar > 100) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um limite de RAM válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        } else if (idTotemVar == null) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um ID de totem válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        } else if (idFastFoodVar == null) {
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Selecione um Fast-Food válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+        } else {
+            fetch("/totem/cadastrarTotem", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    idTotemServer: idTotemVar,
+                    idFastFoodServer: idFastFoodVar,
+                    limiteProcessadorServer: limiteProcessadorVar,
+                    limiteTemperaturaServer: limiteTemperaturaVar,
+                    limiteRamServer: limiteRamVar,
+                    usuarioServer: usuarioVar,
+                    senhaServer: senhaVar
+                })
+            }).then(function (resposta) {
+
+                if (resposta.ok) {
+                    cardErro.style.display = "block"
+                    mensagem_erro.innerHTML = "Cadastro realizado com sucesso!"
+                    setTimeout(() => {
+                        cardErro.style.display = "none";
+                    }, 3000);
+                    window.location = "/dashboard/Totens-cadastrados.html"
+
+
+                } else {
+                    throw ("Houve um erro ao tentar realizar o cadastro!");
+                }
+            }).catch(function (resposta) {
+                console.log(`#ERRO: ${resposta}`);
+            });
+            return false;
+        }
+    }
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+<script>
+
+    var cleave = new Cleave('#ipt_cadastroCEP', {
+        delimiters: ['-'],
+        blocks: [5, 3],
+        uppercase: true
+    });
+
+</script>

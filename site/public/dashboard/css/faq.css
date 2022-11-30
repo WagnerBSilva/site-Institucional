@@ -1,0 +1,517 @@
+:root {
+    --clr-primary: #651fff;
+    --clr-gray: #37474f;
+    --clr-gray-light: #b0bec5;
+    --clr-amarelo-zika: #d8ae5e;
+}
+
+.sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 78px;
+    background: linear-gradient(to top, black, black);
+    padding: 6px 0px;
+    transition: all 0.5s ease;
+    
+}
+.sidebar.active{
+    width: 240px;
+    padding: 6px 0px 6px 0px;
+}
+.sidebar .logo_content .logo{
+    color: #d8ae5e;
+    font-size: 20px;
+    font-weight: 700;
+    font-style: italic;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    padding: 7px 10px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.2s ease;
+}
+.sidebar.active .logo_content .logo{
+    opacity: 1;
+    pointer-events: none;
+}
+.logo_content .logo i{
+    font-size: 28px;
+    margin-right: 5px;
+}
+.sidebar #btn{
+    position: absolute;
+    color: #d8ae5e;
+    left: 40%;
+    top: 6px;
+    font-size: 25px;
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+    transform: translateX(-50%);
+    cursor: pointer;
+}
+.sidebar #btn:hover{
+    opacity: .7;
+}
+.sidebar.active #btn{
+    left: 90%;
+}
+.sidebar ul{
+    margin-top: 50px;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+.sidebar ul{
+    margin-top: 100px;
+}
+
+.sidebar ul li{
+    position: relative;
+    height: 70px;
+    width: 100%;
+    margin: 4.2px 0px;
+    list-style: none;
+    line-height: 70px;
+    padding-inline-start: 0;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+
+ul
+ {
+    padding-inline-start: 0;
+ }
+
+
+.sidebar ul li a{
+    color: #d8ae5e;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all .5s ease;
+    white-space: nowrap;
+    width: auto;
+}
+.sidebar ul li a:hover{
+    background: #d8ae5e;
+    color: black;
+    width: auto;
+}
+.sidebar ul li a i{
+    height: 50px;
+    font-size: 20px;
+    min-width: 50px;
+    border-radius: 15px;
+    line-height: 50px;
+    text-align: center;
+    margin-left: 8px;
+}
+.sidebar .links_name{
+    opacity: 0;
+    pointer-events: none;
+    transition: all .5s ease;
+}
+.sidebar.active .links_name{
+    opacity: 1;
+    pointer-events: auto;
+}
+.sidebar .profile_content{
+    position: absolute;
+    color: black;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    margin-bottom: 12px;
+}
+.sidebar .profile_content .profile{
+    position: relative;
+    padding: 20px 6px;
+    background: none;
+    transition: all .5s ease;
+    height: 30px;
+
+}
+
+.active:after {
+    display: none;
+}
+
+.sidebar.active .profile_content .profile{
+    background: #d8ae5e;
+}
+.profile_content .profile .profile_details{
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+}
+.sidebar.active .profile .profile_details{
+    opacity: 1;
+    pointer-events: auto;
+}
+.profile .profile_details .name{
+    margin-left: 20px;
+    margin-top: 10px;
+    font-size: 12px;
+    word-wrap: break-word;
+    width: 150px;
+    font-weight: 400;
+}
+
+.sidebar.active .profile .profile_details .name{
+    word-wrap: break-word;
+}
+.profile .profile_details .name{
+    font-size: 12px;
+    font-weight: 400;
+}
+.profile #log_out{
+    position: absolute;
+    left: 50%;
+    bottom: 5px;
+    transform: translateX(-50%);
+    min-width: 50px;
+    line-height: 60px;
+    font-size: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: all .5s ease;
+    background: black;
+    color: #d8ae5e;
+    cursor: pointer;
+}
+.sidebar.active .profile #log_out{
+    left: 88%;
+    background: none;
+    color: black;
+    cursor: pointer;
+}
+
+.sidebar.active ~ main{
+    width: calc(100% - 240px);
+    left: 240px;
+}
+
+/* CSS FAQ ABAIXO */
+
+body {
+    font-family: 'Work Sans', sans-serif;
+    margin: 0;
+}
+
+
+
+.faq-heading {
+    border-bottom: #777;
+    padding: 20px 60px;
+    align-items: center;
+    justify-content: center;
+    display: flex
+}
+
+.faq-container {
+    margin-top: 3%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.hr-line {
+    width: 60%;
+    margin: auto;
+
+}
+
+/* Estilize os botões usados ​​para abrir e fechar o corpo da página de perguntas frequentes */
+.faq-page {
+    /* background-color: #eee; */
+    color: #444;
+    cursor: pointer;
+    padding: 30px 20px;
+    width: 60%;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    margin: auto;
+    
+}
+
+.faq-body {
+    margin: auto;
+    /* text-align: center; */
+    width: 50%;
+    padding: auto;
+
+}
+
+/* 
+Adicione uma cor de fundo ao botão se for clicado (adicione a classe .active comh JS), 
+e quando você move o mouse sobre ele (passe o mouse)*/
+.active,
+.faq-page:hover {
+    background-color: #F9F9F9;
+}
+
+/* Estilize o painel da página de perguntas frequentes. Nota: oculto por padrão */
+.faq-body {
+    padding: 0 18px;
+    background-color: white;
+    display: none;
+    overflow: hidden;
+}
+
+.faq-page:after {
+    content: '\02795';
+    /* Caractere Unicode para sinal "mais" (+) */
+    font-size: 13px;
+    color: #777;
+    float: right;
+    margin-left: 5px;
+}
+
+.active:after {
+    content: "\2796";
+    /* Caractere Unicode para sinal "menos" (-) */
+}
+
+main {
+    position: relative;
+    height: 100%;
+    width: calc(100% - 78px);
+    left: 78px;
+    transition: all 0.5s ease;
+    overflow: none;
+}
+
+.sidebar.active~main {
+    width: calc(100% - 240px);
+    left: 240px;
+}
+
+@media screen and (max-width: 500px) {
+    .main {
+        position: fixed;
+        height: 100%;
+        width: calc(100% - 78px);
+        left: 78px;
+        padding: 10px;
+        transition: all 0.5s ease;
+        overflow: none;
+    }
+
+    .sidebar.active {
+        width: 190px;
+        padding: 6px 5px 6px 14px;
+        font-size: 0.8rem;
+        transition: all 0.5s ease;
+    }
+
+    .sidebar.active~main {
+        width: calc(100% - 200px);
+        left: 200px;
+        transition: all 0.5s ease;
+        font-size: 0.7rem;
+        transition: all 0.5s ease;
+    }
+
+    .sidebar ul li a {
+        color: #d8ae5e;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.1s ease;
+        white-space: nowrap;
+        width: auto;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 78px;
+        background: linear-gradient(to top, black, black);
+        padding: 6px 0px;
+        transition: all 0.5s ease;
+
+    }
+}
+
+@media screen and (min-width: 760px) {}
+
+/* Search */
+
+#searchbar {
+    margin-left: 20%;
+    padding: 15px;
+    border-radius: 10px;
+    width: 60%;
+    margin-top: 3%;
+}
+
+input[type=text] {
+    width: 30%;
+    -webkit-transition: width 0.15s ease-in-out;
+    transition: width 0.15s ease-in-out;
+}
+
+/* /* Quando o campo de entrada fica em foco,
+       altere sua largura para 100% */
+/* input[type=text]:focus {
+    width: 45%;
+    height: 50%;
+} */
+
+#list {
+    font-size: 1.5em;
+}
+
+.animals {
+    display: list-item;
+}
+
+li {
+    list-style: none;
+}
+
+@media (max-height: 667px) {
+
+    .sidebar .profile_content{
+        position: absolute;
+        color: black;
+        bottom: 9px;
+        left: 0;
+        width: 100%;
+    }
+
+    .sidebar.active .profile_content{
+        bottom: 2px;
+    }
+
+    .profile #log_out{
+        position: absolute;
+        left: 40%;
+        bottom: 0;
+        transform: translateX(-50%);
+        min-width: 50px;
+        line-height: 60px;
+        font-size: 20px;
+        border-radius: 12px;
+        text-align: center;
+        transition: all .5s ease;
+        background: black;
+        color: #d8ae5e;
+        cursor: pointer;
+    }
+    .sidebar.active .profile #log_out{
+        left: 88%;
+        background: none;
+        color: black;
+        cursor: pointer;
+    }
+
+
+    .sidebar{
+        height: 100%;
+        width: 78px;
+        background: linear-gradient(to top, black, black);
+        padding: 6px 0px;
+        transition: all 0.5s ease;
+    }
+    .sidebar.active{
+        width: 200px;
+        padding: 6px 0px 6px 0px;
+    }
+    .sidebar .logo_content .logo{
+        color: #d8ae5e;
+        font-size: 20px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        width: 100%;
+        padding: 7px 10px;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.2s ease;
+    }
+    .sidebar.active .logo_content .logo{
+        opacity: 1;
+        pointer-events: none;
+    }
+    .logo_content .logo i{
+        font-size: 10px;
+        margin-right: 5px;
+    }
+    .sidebar #btn{
+        position: absolute;
+        color: #d8ae5e;
+        left: 47%;
+        top: 6px;
+        font-size: 25px;
+        height: 50px;
+        width: 50px;
+        text-align: center;
+        line-height: 50px;
+        transform: translateX(-50%);
+        cursor: pointer;
+    }
+    .sidebar #btn:hover{
+        opacity: .7;
+    }
+    .sidebar.active #btn{
+        left: 90%;
+    }
+    .sidebar ul li{
+        position: relative;
+        height: 50px;
+        width: 100%;
+        margin: 1px 0px;
+        list-style: none;
+        line-height: 40px;
+    }
+    
+    .sidebar ul li a{
+        color: #d8ae5e;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all .2s ease;
+        white-space: nowrap;
+        width: auto;    
+        font-size: 12px;
+        height: 50px;
+    }
+    .sidebar ul li a:hover{
+        background: #d8ae5e;
+        color: black;
+        width: auto;
+        height: 50px;
+    }
+    .sidebar ul li a i{
+        height: 15px;
+        font-size: 15px;
+        margin-bottom: 35px;
+    }
+
+    .sidebar ul{
+        margin-top: 40px;
+    }
+
+}
+
+.goHelp {
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+}

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cadastrar Funcionários</title>
+    <link rel="icon" type="image/jpg" href="sources/logo.png" />
+    <link rel="stylesheet" href="css/cadastrar-totem.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <script src="../js/funcoes.js"></script>
+</head>
+
+<body onload="validarSessao()">
+    <!-- <body> -->
+    <aside id="sideBar" class="sidebar">
+        
+    </aside>
+    <main>
+        <div class="pg">
+            <div class="alerta_erro">
+                <div class="card_erro" id="cardErro">
+                    <span id="mensagem_erro"></span>
+                </div>
+            </div>
+            <div class="container">
+                <div class="titulo">Cadastrar funcionário</div>
+
+                <!-- Cadastro funcionario -->
+                <div class="form" id="cadastroFuncionario" style="display: block;">
+                    <div class="detalhes">
+                        <div class="input-box">
+                            <span class="details">Nome completo</span>
+                            <input type="text" placeholder="Digite seu nome" id="ipt_cadastroNome" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Usuario</span>
+                            <input type="text" placeholder="Digite Nome de funcionario" id="ipt_cadastroUsuario"
+                                required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">E-mail</span>
+                            <input type="text" placeholder="Digite seu E-mail" id="ipt_cadastroEmail"
+                                pattern="^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+                                required onblur="listarPorEmail()">
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Telefone</span>
+                            <input type="text" placeholder="Digite seu Telefone" id="ipt_telefone"
+                                pattern="^\(\d{2}\)\s\d{4,5}-?\d{4}" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">CPF</span>
+                            <input type="text" placeholder="Digite o CPF" id="ipt_cadastroCPF"
+                                pattern="([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})"
+                                required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Senha</span>
+                            <input type="password" placeholder="Crie sua senha" id="ipt_cadastroSenha"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_=+-]).{6,12}" required>
+                        </div>
+                        <div class="input-box">
+                            <span class="detalhe">Confirmar senha</span>
+                            <input type="password" placeholder="Digite a senha novamente"
+                                id="ipt_cadastroSenhaConfirmacao"
+                                pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_=+-]).{6,12}" required>
+                        </div>
+                    </div>
+                    <div class="button">
+                        <button onclick="cadastrarUsuario()">Registrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+
+</html>
+<script>
+
+var emailCad = true
+    function listarPorEmail() {
+        var email = ipt_cadastroEmail.value;
+        fetch(`/usuarios/listarPorEmail/${email}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+            console.log(resposta)
+            if (resposta.status == 200) {
+                emailCad = true
+                cardErro.style = "display: block"
+                    mensagem_erro.innerHTML = "E-mail já cadastrado";
+                    setTimeout(() => {
+                        cardErro.style.display = "none";
+                    }, 3000);
+            } else {
+                emailCad = false;
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+
+    function cadastrarUsuario() {
+
+
+        var nomeUsuarioVar = ipt_cadastroNome.value;
+        var usuarioVar = ipt_cadastroUsuario.value;
+        var telefoneVar = ipt_telefone.value;
+        var cpfVar = ipt_cadastroCPF.value;
+        var emailVar = ipt_cadastroEmail.value;
+        var senhaVar = ipt_cadastroSenha.value;
+        var confirmacaoSenhaVar = ipt_cadastroSenhaConfirmacao.value;
+        var tpUsuarioVar = 3;
+        var fkEmpresaVar = sessionStorage.EMPRESA;
+        // var fkEmpresaVar = 1;
+
+        //para validação RegEx
+        const reEmail = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        const rePassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&_=+-]).{6,12}/;
+        const reTelefone = /^\(\d{2}\)\s\d{4,5}-?\d{4}/;
+        const reCPF = /^([0-9]{2}[\.]?[0-9]{3}[\.]?[0-9]{3}[\/]?[0-9]{4}[-]?[0-9]{2})|([0-9]{3}[\.]?[0-9]{3}[\.]?[0-9]{3}[-]?[0-9]{2})/
+
+        var myEmail = reEmail.exec(emailVar);
+        var myPassword = rePassword.exec(senhaVar);
+        var myTelefone = reTelefone.exec(telefoneVar);
+        var myCPF = reCPF.exec(cpfVar);
+        
+        
+        if(emailCad == true){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "E-mail já cadastrado";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 1000);
+
+            return false;
+        }else if(nomeUsuarioVar == null || nomeUsuarioVar == undefined){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Preencha o nome";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else if(usuarioVar == null || usuarioVar == undefined){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Preencha o Usuario";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else if(myEmail == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um e-mail válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else if(myTelefone == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um telefone válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else if(myCPF == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira um CPF válido";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else if(myPassword == null){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "Insira uma senha válida";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else if(senhaVar != confirmacaoSenhaVar){
+            cardErro.style.display = "block"
+            mensagem_erro.innerHTML = "A senhas não são iguais";
+            setTimeout(() => {
+                cardErro.style.display = "none";
+            }, 3000);
+
+            return false;
+        }else {
+            fetch("/usuarios/cadastrarUsuario", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nomeServer: nomeUsuarioVar,
+                    usuarioServer: usuarioVar,
+                    telefoneServer: telefoneVar,
+                    cpfServer: cpfVar,
+                    emailServer: emailVar,
+                    senhaServer: senhaVar,
+                    tpUsuarioServer: tpUsuarioVar,
+                    fkEmpresaServer: fkEmpresaVar
+                })
+            }).then(function (resposta) {
+                console.log(resposta)
+                if (resposta.ok) {
+                    cardErro.style.display = "block"
+                    mensagem_erro.innerHTML = "Cadastro realizado com sucesso!"
+                    setTimeout(() => {
+                        cardErro.style.display = "none";
+                    }, 3000);
+                    window.location = "/dashboard/funcionarios-cadastrados.html"
+                    
+                } else {
+                    throw ("Houve um erro ao tentar realizar o cadastro!");
+                }
+            }).catch(function (resposta) {
+                console.log(`#ERRO: ${resposta}`);
+
+            });
+            return false;
+        }
+    }
+    
+
+
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/cleave.js@1.6.0/dist/cleave.min.js"></script>
+
+<script>
+    var cleave = new Cleave('#ipt_telefone', {
+        delimiters: ['(', ')', ' ', '-'],
+        blocks: [0, 2, 0, 5, 4],
+        uppercase: true
+    });
+
+    var cleave = new Cleave('#ipt_cadastroCPF', {
+        delimiters: ['.', '.', '-'],
+        blocks: [3, 3, 3, 2],
+        uppercase: true
+    });
+</script>

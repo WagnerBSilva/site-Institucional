@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="../js/funcoes.js"></script>
+    <title>Totens</title>
+    <link rel="icon" type="image/jpg" href="sources/logo.png" />
+</head>
+<!DOCTYPE html>
+<html lang="en">
+
+<body onload="validarSessao()">
+    <!-- <body> -->
+
+    <aside id="sideBar" class="sidebar">
+
+    </aside>
+    <section class="dashboard">
+
+        <div class="dash-content">
+
+            <div class="activity">
+                <div class="title">
+                    <i class='bx bx-mobile-alt'></i>
+                    <span class="text">Totens cadastrados</span>
+                </div>
+
+                <div class="activity-data">
+                    <div id="idTotem" class="data names">
+
+                    </div>
+
+                    <div id="nomesFastFood" class="data email">
+
+                    </div>
+
+                    <div id="sistemaOperacional" class="data type">
+                    </div>
+
+                    <div id="statusAtual" class="data type">
+                    </div>
+
+                    <div id="cep" class="data type">
+                    </div>
+
+                    <div id="reiniciar" class="data type">
+
+                    </div>
+
+                    <div id="apagar" class="data type">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </section>
+</body>
+
+</html>
+
+<script>
+    var tpUsuario = sessionStorage.TIPO_USUARIO
+    var lista = []
+    var listaFastFood = []
+    listar();
+
+    function listar() {
+        var idEmpresaVar = sessionStorage.EMPRESA
+        fetch(`/fastFood/listar/${idEmpresaVar}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+                resposta.json().then(json => {
+                    //console.log(json);
+                    //console.log(json.length)
+                    //console.log(JSON.stringify(json));
+                    listaFastFood = [];
+
+                    for (let i = 0; i < json.length; i++) {
+                        listaFastFood.push(json[i]);
+                        console.log(`cadastro${i}`)
+                        console.log(lista[i])
+                    }
+                    listarTotem();
+                });
+            } else {
+                console.log("Houve um erro ao tentar realizar o listar!");
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function listarTotem() {
+        var idEmpresa = sessionStorage.EMPRESA
+        fetch(`/totem/listar/${idEmpresa}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO listar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+                resposta.json().then(json => {
+                    //console.log(json);
+                    //console.log(json.length)
+                    //console.log(JSON.stringify(json));
+                    lista = [];
+
+                    for (let i = 0; i < json.length; i++) {
+                        lista.push(json[i]);
+                        console.log(`cadastro${i}`)
+                        console.log(lista[i])
+                    }
+                    mostrarTotem();
+                });
+            } else {
+                console.log("Houve um erro ao tentar realizar o listar!");
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function mostrarTotem() {
+        if (lista.length != -1) {
+            idTotem.innerHTML += `
+                <span class="data-title">ID </span>
+                `
+
+            nomesFastFood.innerHTML += `
+                <span class="data-title">Fast-food</span>
+                `
+
+            sistemaOperacional.innerHTML += `
+                <span class="data-title">Sistema Operacional</span>
+                `
+
+            statusAtual.innerHTML += `
+                <span class="data-title">Status atual </span>
+                `
+
+            cep.innerHTML += `
+                <span class="data-title">cep </span>
+                `
+
+            apagar.innerHTML += `
+                <span class="data-title">Apagar </span>
+                `
+
+            reiniciar.innerHTML += `<span class="data-title"> Reiniciar </span>
+                `
+
+            for (let i = 0; i < lista.length; i++) {
+
+                if (lista[i].isAtivoTotem == 't' && lista[i].isAtivoFastFood == 't') {
+
+                    nomesFastFood.innerHTML += `
+                    <span class="data-title">${lista[i].nomeFastFood}</span>
+                    `
+
+                    idTotem.innerHTML += `
+                    <span class="data-title">${lista[i].idTotem}</span>
+                    `
+
+                    //<span class="data-title">${lista[i].sistemaOperacional}</span>
+                    sistemaOperacional.innerHTML += `
+                    <span class="data-title">Ubuntu</span>
+                    `
+
+
+
+                    var status = 'OK';
+                    if (lista[i].memoriaRamTotam == null) {
+                        status = 'Não funcionando';
+                    }
+                    statusAtual.innerHTML += `
+                    <span class="data-title">${status}</span>
+                    `
+
+                    cep.innerHTML += `
+                    <span class="data-title">${lista[i].CEP}</span>
+                    `
+
+                    if (tpUsuario == 2) {
+
+                        apagar.innerHTML += `
+                        <span onclick="alterarStatus(${lista[i].idTotem}, 'e')" class="data-list"><i class="uil uil-trash-alt"></i></span>
+                        `
+                    }
+
+                    if (tpUsuario == 2) {
+
+                        reiniciar.innerHTML += `
+                        <span onclick="alterarStatus('${lista[i].idTotem}', 'd')" class="data-list"><i class='bx bx-power-off'></i></span>
+`
+                    }
+                }
+
+            }
+        }
+    }
+
+    function alterarStatus(id, isAtivo) {
+        console.log(isAtivo)
+
+        fetch(`/totem/alterarStatus/${id}`, {
+
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+
+                isAtivo: isAtivo
+            })
+        }).then(function (resposta) {
+
+            if (resposta.ok) {
+
+                if (isAtivo == 'd') {
+                    cadastrarComando(id);
+                }
+
+
+            } else if (resposta.status == 404) {
+                window.alert("Deu 404!");
+            } else {
+                throw ("Houve um erro ao tentar realizar a postagem! Código da resposta: " + resposta.status);
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+        });
+    }
+
+    function cadastrarComando(idTotem) {
+        var comandoVar = "shutdown /r";
+        var idTotemVar = idTotem;
+        var idUsuarioVar = sessionStorage.ID_USUARIO;
+
+        fetch("/comandos/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                comandoServer: comandoVar,
+                idTotemServer: idTotemVar,
+                idUsuarioServer: idUsuarioVar,
+
+            })
+        }).then(function (resposta) {
+
+            if (!resposta.ok) {
+                throw ("Houve um erro ao tentar realizar o cadastro do comando!");
+                alterarStatus(idTotem, 't');
+            } else {
+                window.alert("Post atualizado com sucesso pelo usuario de email: " + sessionStorage.getItem("EMAIL_USUARIO") + "!");
+                window.location = "/dashboard/totens-cadastrados.html"
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+        });
+        return false;
+    }
+
+
+
+</script>

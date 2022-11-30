@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pré-Dashboard</title>
+  <link rel="icon" type="image/jpg" href="sources/logo.png"/>
+  <link rel="stylesheet" href="css/teladash.css">
+  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+  <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+  <script src="../js/funcoes.js"></script>
+</head>
+
+<body onload="validarSessao()">
+  <aside id="sideBar" class="sidebar">
+        
+  </aside>
+  <main>
+    <div class="overview">
+      <div class="title">
+        <i class='bx bx-mobile-alt'></i>
+        <span class="text">Totens</span>
+      </div>
+    </div>
+    <div id="totens" class="wrapper-grid">
+
+        
+      </div>
+    </div>
+    </div>
+  </main>
+
+
+</body>
+
+
+</html>
+
+<script>
+  var lista = []
+  listar();
+
+  function listar() {
+    var idEmpresa = sessionStorage.EMPRESA
+    fetch(`/totem/listar/${idEmpresa}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }).then(function (resposta) {
+      console.log("ESTOU NO THEN DO listar()!")
+
+      if (resposta.ok) {
+        console.log(resposta);
+        resposta.json().then(json => {
+          //console.log(json);
+          //console.log(json.length)
+          //console.log(JSON.stringify(json));
+          lista = [];
+
+          for (let i = 0; i < json.length; i++) {
+            lista.push(json[i]);
+            console.log(`cadastro${i}`)
+            console.log(lista[i])
+          }
+
+          mostrarTotem();
+        });
+      } else {
+        console.log("Houve um erro ao tentar realizar o listar!");
+        resposta.text().then(texto => {
+          console.error(texto);
+        });
+      }
+
+    }).catch(function (erro) {
+      console.log(erro);
+    })
+
+    return false;
+  }
+
+  function mostrarTotem() {
+
+
+    if (lista.length != -1) {
+      // criando e manipulando elementos do HTML via JavaScript
+      var totens = document.getElementById("totens");
+      totens.innerHTML = "";
+      for (let i = 0; i < lista.length; i++) {
+        var resposta = lista[i];
+          if(resposta.isAtivoTotem == 't' && resposta.isAtivoFastFood == 't'){
+            
+          var divTotem = document.createElement("div");
+          var imgTotem = document.createElement("img");
+          var h1Id = document.createElement("h1");
+          var pDescricao = document.createElement("p");
+          var buttonStatus = document.createElement("button");
+
+          var status = 'OK';
+          if (lista[i].memoriaRamTotam == null) {
+            status = 'Alerta';
+          }
+
+          h1Id.innerHTML = "ID: " + resposta.idTotem;
+          pDescricao.innerHTML = "SO: Ubuntu <br> RAM: 8GB <br>";
+          buttonStatus.innerHTML = status;
+
+          imgTotem.src = "sources/Design sem nome (1).png";
+
+          divTotem.className = "container";
+          imgTotem.className = "profile-img";
+          h1Id.className = "id";
+          pDescricao.className = "descricao";
+          if (status == 'OK') {
+            buttonStatus.className = "btn alertas";
+          } else {
+            buttonStatus.className = "btn alertas-grave";
+          }
+
+          buttonStatus.setAttribute("onclick", `mostrarDash('${resposta.idTotem}')`);
+
+          divTotem.appendChild(imgTotem);
+          divTotem.appendChild(h1Id);
+          divTotem.appendChild(pDescricao);
+          divTotem.appendChild(buttonStatus);
+          totens.appendChild(divTotem);
+        }
+      }
+    }
+  }
+
+  function mostrarDash(idTotem) {
+    localStorage.iDTOTEM = idTotem;
+    window.location = "/dashboard/dashboard.html";
+  }
+
+</script>
